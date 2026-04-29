@@ -1,0 +1,54 @@
+name: Daily AI News
+
+on:
+  schedule:
+    # Setiap hari pukul 05:00 WIB (UTC+7 = 22:00 UTC hari sebelumnya)
+    - cron: "0 22 * * *"
+
+  # Tombol untuk jalankan manual dari GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  send-ai-news:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # Restore leaderboard data dari run sebelumnya
+      - name: Restore leaderboard cache
+        uses: actions/cache@v4
+        with:
+          path: data/previous_leaderboard.json
+          key: leaderboard-data-${{ github.run_id }}
+          restore-keys: |
+            leaderboard-data-
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium --with-deps
+
+      - name: Run AI News Bot
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+        run: python main.py
+
+      # Simpan leaderboard terbaru untuk perbandingan besok
+      - name: Save leaderboard data
+        if: always()
+        uses: actions/cache@v4
+        with:
+          path: data/previous_leaderboard.json
+          key: leaderboard-data-${{ github.run_id }}
