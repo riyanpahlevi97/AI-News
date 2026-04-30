@@ -44,9 +44,12 @@ def summarize_news(news_items):
             output += f"<span class='source'>**Source:** {item.get('source', 'Unknown')} | **Published:** {item.get('published', '')}</span>\n\n"
             summary = item.get('raw_summary', '').strip()
             if summary:
-                # Truncate summary if too long
-                if len(summary) > 300:
-                    summary = summary[:297] + "..."
-                output += f"<div class='summary'>{summary}</div>\n\n"
+                if item.get('source') == 'LMSYS Arena':
+                    # Do not wrap the Markdown table in a div, so the markdown parser renders it correctly
+                    output += f"{summary}\n\n"
+                else:
+                    if len(summary) > 300:
+                        summary = summary[:297] + "..."
+                    output += f"<div class='summary'>\n\n{summary}\n\n</div>\n\n"
             output += "---\n\n"
         return output

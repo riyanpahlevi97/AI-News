@@ -26,24 +26,105 @@ def send_email_newsletter(content):
     message["To"] = email_receiver
     message["Subject"] = "Daily AI News Summary"
 
-    # Convert Markdown to HTML
-    html_content = markdown.markdown(content)
+    # Convert Markdown to HTML with table support
+    html_content = markdown.markdown(content, extensions=['tables'])
     
     # Create a nice HTML template
     html_template = f"""
     <html>
       <head>
         <style>
-          body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
-          h1, h2, h3 {{ color: #2c3e50; }}
-          a {{ color: #3498db; text-decoration: none; }}
-          a:hover {{ text-decoration: underline; }}
-          .source {{ color: #7f8c8d; font-size: 0.9em; }}
-          .summary {{ margin-bottom: 20px; }}
+          body {{ 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            color: #e2e8f0; 
+            background-color: #0f172a;
+            margin: 0;
+            padding: 40px 20px;
+          }}
+          .container {{
+            max-width: 650px;
+            margin: 0 auto;
+            background-color: #1e293b;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+          }}
+          h1 {{ 
+            color: #f8fafc; 
+            text-align: center;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            font-size: 28px;
+          }}
+          h2, h3 {{ 
+            color: #f1f5f9; 
+            margin-top: 30px;
+          }}
+          a {{ 
+            color: #38bdf8; 
+            text-decoration: none; 
+            font-weight: 500;
+          }}
+          a:hover {{ text-decoration: underline; color: #7dd3fc; }}
+          .source {{ 
+            color: #94a3b8; 
+            font-size: 0.85em; 
+            display: block;
+            margin-bottom: 10px;
+          }}
+          .summary {{ 
+            margin-bottom: 25px; 
+            color: #cbd5e1;
+            background-color: #334155;
+            padding: 15px;
+            border-left: 4px solid #38bdf8;
+            border-radius: 0 4px 4px 0;
+            overflow-x: auto;
+          }}
+          hr {{
+            border: 0;
+            height: 1px;
+            background: #334155;
+            margin: 30px 0;
+          }}
+          .footer {{
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.85em;
+            color: #64748b;
+          }}
+          /* Table Styles */
+          table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.95em;
+            color: #e2e8f0;
+          }}
+          table th, table td {{
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+          }}
+          table th {{
+            background-color: #0f172a;
+            color: #38bdf8;
+            font-weight: 600;
+          }}
+          table tr:hover {{
+            background-color: rgba(255, 255, 255, 0.05);
+          }}
         </style>
       </head>
       <body>
-        {html_content}
+        <div class="container">
+          {html_content}
+          <div class="footer">
+            <p>Sent by Daily AI News Bot 🤖</p>
+          </div>
+        </div>
       </body>
     </html>
     """

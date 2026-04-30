@@ -23,7 +23,8 @@ async def fetch_arena_leaderboard():
             # Extract rows from the table
             rows = await page.query_selector_all("table tr")
             
-            results = []
+            table_md = "| Rank | Model Name | Elo Rating |\n|---|---|---|\n"
+            
             # Skip header row (usually the first one)
             for row in rows[1:11]:  # Get top 10 models
                 cols = await row.query_selector_all("td")
@@ -37,13 +38,14 @@ async def fetch_arena_leaderboard():
                     score = score_raw.split('\n')[0].strip()
                     rank = rank.strip()
                     
-                    results.append({
-                        'title': f"🏆 #{rank} on Arena: {model_name}",
-                        'url': url,
-                        'source': 'LMSYS Arena',
-                        'score': score,
-                        'raw_summary': f"Current Elo rating: {score}. Ranked #{rank} on the LMSYS Chatbot Arena."
-                    })
+                    table_md += f"| #{rank} | **{model_name}** | {score} |\n"
+            
+            results = [{
+                'title': "🏆 LMSYS Chatbot Arena Top 10 Leaderboard",
+                'url': url,
+                'source': 'LMSYS Arena',
+                'raw_summary': table_md
+            }]
             
             await browser.close()
             return results
