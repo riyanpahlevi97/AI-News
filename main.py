@@ -1,8 +1,9 @@
 import asyncio
 from scrapers.rss_scraper import fetch_rss_news
 from scrapers.arena_scraper import fetch_arena_leaderboard
-from summarizer import summarize_news
+from summarizer import summarize_news, summarize_leaderboard
 from emailer import send_email_newsletter
+
 
 async def main():
     print("Starting AI News Bot...")
@@ -18,6 +19,7 @@ async def main():
     if not rss_news and not arena_news:
         print("No news found. Skipping summarization and email.")
         return
+
 
     # 3. Summarize news using AI (Curation logic)
     print("Curating RSS news...")
@@ -39,6 +41,7 @@ async def main():
         print("AI News Bot completed successfully!")
     else:
         print("AI News Bot failed to send email.")
+
 
 if __name__ == "__main__":
     asyncio.run(main())
