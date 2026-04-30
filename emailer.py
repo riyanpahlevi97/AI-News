@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def send_email(content):
+def send_email_newsletter(content):
     """
     Sends the AI news summary via email.
     """
