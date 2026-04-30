@@ -50,33 +50,42 @@ def send_email_newsletter(content):
             border-radius: 12px;
             box-shadow: 0 8px 30px rgba(0,0,0,0.4);
           }}
+          p, span, div {{
+            color: #e2e8f0;
+          }}
+          blockquote, em, i {{
+            color: #94a3b8 !important;
+            font-style: italic;
+          }}
           h1 {{ 
             color: #f8fafc; 
             text-align: center;
             border-bottom: 2px solid #334155;
             padding-bottom: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-size: 28px;
           }}
           h2, h3 {{ 
-            color: #f1f5f9; 
-            margin-top: 30px;
+            color: #f8fafc; 
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-size: 22px;
           }}
           a {{ 
-            color: #38bdf8; 
+            color: #38bdf8 !important; 
             text-decoration: none; 
-            font-weight: 500;
+            font-weight: 600;
           }}
-          a:hover {{ text-decoration: underline; color: #7dd3fc; }}
+          a:hover {{ text-decoration: underline; color: #7dd3fc !important; }}
           .source {{ 
-            color: #94a3b8; 
-            font-size: 0.85em; 
+            color: #cbd5e1 !important; 
+            font-size: 0.9em; 
             display: block;
             margin-bottom: 10px;
           }}
           .summary {{ 
-            margin-bottom: 25px; 
-            color: #cbd5e1;
+            margin-bottom: 15px; 
+            color: #e2e8f0;
             background-color: #334155;
             padding: 15px;
             border-left: 4px solid #38bdf8;
@@ -86,27 +95,27 @@ def send_email_newsletter(content):
           hr {{
             border: 0;
             height: 1px;
-            background: #334155;
-            margin: 30px 0;
+            background: #475569;
+            margin: 20px 0;
           }}
           .footer {{
             text-align: center;
-            margin-top: 40px;
+            margin-top: 30px;
             font-size: 0.85em;
-            color: #64748b;
+            color: #94a3b8;
           }}
           /* Table Styles */
           table {{
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin: 10px 0;
             font-size: 0.95em;
             color: #e2e8f0;
           }}
           table th, table td {{
-            padding: 12px 15px;
+            padding: 10px 12px;
             text-align: left;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid #475569;
           }}
           table th {{
             background-color: #0f172a;
