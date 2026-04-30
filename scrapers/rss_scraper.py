@@ -7,13 +7,8 @@ logger = logging.getLogger(__name__)
 
 RSS_SOURCES = [
     {
-        "name": "Anthropic",
-        "url": "https://www.anthropic.com/rss.xml",
-        "badge": "anthropic",
-    },
-    {
-        "name": "OpenAI",
-        "url": "https://openai.com/blog/rss.xml",
+        "name": "OpenAI Blog",
+        "url": "https://openai.com/news/rss.xml",
         "badge": "openai",
     },
     {
@@ -22,14 +17,34 @@ RSS_SOURCES = [
         "badge": "deepmind",
     },
     {
-        "name": "Hugging Face",
+        "name": "Hugging Face Blog",
         "url": "https://huggingface.co/blog/feed.xml",
         "badge": "hf",
     },
     {
-        "name": "MIT Technology Review AI",
-        "url": "https://www.technologyreview.com/feed/",
-        "badge": "mit",
+        "name": "The Verge AI",
+        "url": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+        "badge": "verge",
+    },
+    {
+        "name": "VentureBeat AI",
+        "url": "https://venturebeat.com/category/ai/feed/",
+        "badge": "venturebeat",
+    },
+    {
+        "name": "TechCrunch AI",
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "badge": "techcrunch",
+    },
+    {
+        "name": "ArXiv CS.AI",
+        "url": "https://rss.arxiv.org/rss/cs.AI",
+        "badge": "arxiv",
+    },
+    {
+        "name": "Import AI",
+        "url": "https://importai.substack.com/feed",
+        "badge": "importai",
     },
 ]
 

@@ -6,50 +6,91 @@ load_dotenv()
 
 def summarize_news(news_items):
     """
-    Summarizes AI news items using OpenAI API into a high-quality Markdown format.
+    Curates and ranks AI news items using the daily curation prompt.
     """
     if not news_items:
         return "No new AI news found for the last 24 hours."
 
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-    # Prepare the news items as a string for the prompt
-    news_text = "\n".join([f"- {item['title']} ({item['url']})" for item in news_items[:20]])
+    # Prepare the articles for the prompt
+    articles_text = ""
+    for item in news_items:
+        articles_text += f"Sumber: {item.get('source', 'Unknown')}\n"
+        articles_text += f"Judul: {item.get('title', 'No Title')}\n"
+        articles_text += f"Ringkasan: {item.get('raw_summary', 'No summary available')}\n"
+        articles_text += f"Link: {item.get('url', '#')}\n"
+        articles_text += "-------------------\n"
 
     prompt = (
-        "You are an expert AI news curator. Please summarize the following AI news items "
-        "into a concise, engaging, and professional daily newsletter in Markdown format. "
-        "Group similar stories together and provide a brief 1-2 sentence summary for each key highlight. "
-        "Ensure you include the original links. Use emojis to make it visually appealing. "
-        "Start with a catchy title like '# 🚀 Daily AI News Pulse'.\n\n"
-        f"News items:\n{news_text}"
+        "Kamu adalah kurator berita AI harian yang tajam dan selektif.\n\n"
+        "Berikut adalah artikel-artikel yang dikumpulkan hari ini dari RSS feed terpercaya:\n\n"
+        f"{articles_text}\n\n"
+        "Tugasmu:\n"
+        "- Pilih TEPAT 5 artikel paling penting\n"
+        "- Urutkan dari yang paling prioritas ke paling rendah menggunakan hierarki ini:\n\n"
+        "  P1 → Rilis atau pengumuman model AI baru dari lab besar (OpenAI, Anthropic, Google, Meta, Mistral, xAI)\n"
+        "  P2 → Riset atau breakthrough teknikal yang signifikan\n"
+        "  P3 → Bisnis, funding besar (>$50M), atau akuisisi terkait AI\n"
+        "  P4 → Regulasi dan kebijakan AI dari pemerintah\n"
+        "  P5 → Tren, laporan industri, atau analisis dari tokoh berpengaruh\n\n"
+        "Aturan seleksi:\n"
+        "- Jika ada 2 artikel tentang topik yang sama, pilih yang paling lengkap dan buang yang lain\n"
+        "- Utamakan berita dari sumber resmi lab AI dibanding media pihak ketiga\n"
+        "- Abaikan artikel yang hanya opini tanpa data atau fakta baru\n\n"
+        "Tulis output dalam format ini untuk setiap artikel:\n\n"
+        "[Urutan N] P[1-5] | [Nama Sumber]\n"
+        "Judul: ...\n"
+        "Ringkasan: (2-3 kalimat, langsung ke inti, bahasa Indonesia)\n"
+        "Kenapa penting: (1 kalimat)\n"
+        "Link: ...\n\n"
+        "Setelah 5 artikel, tambahkan:\n\n"
+        "TREND HARI INI:\n"
+        "(1 paragraf singkat tentang pola atau tema besar yang muncul dari berita hari ini)"
     )
 
     try:
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant that summarizes AI news."},
+                {"role": "system", "content": "You are a professional AI news curator delivering high-quality summaries in Indonesian."},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.7
+            temperature=0.5
         )
         return response.choices[0].message.content
     except Exception as e:
         print(f"Error during OpenAI summarization: {e}")
-        output = "# 🚀 Daily AI News Summary\n\n"
-        output += "> *Note: This is an automatically generated digest. (OpenAI summarization is currently unavailable)*\n\n"
-        for item in news_items[:15]:
-            output += f"### [{item['title']}]({item['url']})\n"
-            output += f"<span class='source'>**Source:** {item.get('source', 'Unknown')} | **Published:** {item.get('published', '')}</span>\n\n"
-            summary = item.get('raw_summary', '').strip()
-            if summary:
-                if item.get('source') == 'LMSYS Arena':
-                    # Do not wrap the Markdown table in a div, so the markdown parser renders it correctly
-                    output += f"{summary}\n\n"
-                else:
-                    if len(summary) > 300:
-                        summary = summary[:297] + "..."
-                    output += f"<div class='summary'>\n\n{summary}\n\n</div>\n\n"
-            output += "---\n\n"
-        return output
+        return "Gagal mengkurasi berita hari ini. Mohon coba lagi nanti."
+
+def summarize_leaderboard(current_data, previous_data):
+    """
+    Updates AI model leaderboard ranking and highlights changes.
+    """
+    if not current_data:
+        return "No leaderboard data available."
+
+    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+    prompt = (
+        "Tandai model yang posisinya naik (↑), turun (↓), atau baru masuk (🆕) dibanding data sebelumnya:\n\n"
+        f"Data Leaderboard Sekarang: {current_data}\n\n"
+        f"Data Leaderboard Kemarin: {previous_data}\n\n"
+        "1. Tulis 2-3 kalimat highlight: model mana yang paling menarik perhatian hari ini dan mengapa\n"
+        "2. Jika tidak ada perubahan signifikan, cukup tulis 'Tidak ada perubahan ranking signifikan hari ini'\n"
+        "Format output: HTML siap embed di email, gunakan tabel sederhana."
+    )
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are an AI leaderboard analyst providing concise updates in HTML format."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.3
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"Error during leaderboard update: {e}")
+        return "<p>Leaderboard update currently unavailable.</p>"
