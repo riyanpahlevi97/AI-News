@@ -15,21 +15,25 @@ async def main():
     print("Scraping Arena leaderboard...")
     arena_news = await fetch_arena_leaderboard()
     
-    # Combine all gathered news
-    all_news = rss_news + arena_news
-    print(f"Gathered {len(all_news)} news items.")
-    
-    if not all_news:
+    if not rss_news and not arena_news:
         print("No news found. Skipping summarization and email.")
         return
 
-    # 3. Summarize news using AI
-    print("Summarizing news...")
-    summary = summarize_news(all_news)
+    # 3. Summarize news using AI (Curation logic)
+    print("Curating RSS news...")
+    news_summary = summarize_news(rss_news)
     
-    # 4. Send the summary via email
+    # 4. Update Leaderboard (Current only for now)
+    print("Generating leaderboard update...")
+    # Passing current data, and None for previous data as requested
+    arena_summary = summarize_leaderboard(arena_news, previous_data=None)
+    
+    # Combine everything for the email
+    full_content = f"{news_summary}\n\n<hr>\n\n<h2>🏆 Chatbot Arena Update</h2>\n{arena_summary}"
+    
+    # 5. Send the summary via email
     print("Sending email...")
-    success = send_email_newsletter(summary)
+    success = send_email_newsletter(full_content)
     
     if success:
         print("AI News Bot completed successfully!")
