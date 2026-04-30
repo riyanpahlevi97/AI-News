@@ -37,8 +37,16 @@ def summarize_news(news_items):
         return response.choices[0].message.content
     except Exception as e:
         print(f"Error during OpenAI summarization: {e}")
-        # Fallback to basic formatting if API fails
-        output = "# 🚀 Daily AI News Summary (Fallback)\n\n"
+        output = "# 🚀 Daily AI News Summary\n\n"
+        output += "> *Note: This is an automatically generated digest. (OpenAI summarization is currently unavailable)*\n\n"
         for item in news_items[:15]:
-            output += f"- **{item['title']}** [Link]({item['url']}) - {item.get('source', 'Unknown Source')}\n"
+            output += f"### [{item['title']}]({item['url']})\n"
+            output += f"<span class='source'>**Source:** {item.get('source', 'Unknown')} | **Published:** {item.get('published', '')}</span>\n\n"
+            summary = item.get('raw_summary', '').strip()
+            if summary:
+                # Truncate summary if too long
+                if len(summary) > 300:
+                    summary = summary[:297] + "..."
+                output += f"<div class='summary'>{summary}</div>\n\n"
+            output += "---\n\n"
         return output

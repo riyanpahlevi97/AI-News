@@ -3,7 +3,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
-
+import markdown
 load_dotenv()
 
 def send_email_newsletter(content):
@@ -26,9 +26,28 @@ def send_email_newsletter(content):
     message["To"] = email_receiver
     message["Subject"] = "Daily AI News Summary"
 
-    # Attach the body (converting markdown to plain text or simple HTML)
-    body = f"Here is your daily AI news summary:\n\n{content}"
-    message.attach(MIMEText(body, "plain"))
+    # Convert Markdown to HTML
+    html_content = markdown.markdown(content)
+    
+    # Create a nice HTML template
+    html_template = f"""
+    <html>
+      <head>
+        <style>
+          body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+          h1, h2, h3 {{ color: #2c3e50; }}
+          a {{ color: #3498db; text-decoration: none; }}
+          a:hover {{ text-decoration: underline; }}
+          .source {{ color: #7f8c8d; font-size: 0.9em; }}
+          .summary {{ margin-bottom: 20px; }}
+        </style>
+      </head>
+      <body>
+        {html_content}
+      </body>
+    </html>
+    """
+    message.attach(MIMEText(html_template, "html"))
 
     try:
         # Connect to the SMTP server and send email
